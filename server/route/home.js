@@ -1,0 +1,9 @@
+const express = require('express')
+
+const home = express.Router()
+
+home.get('/map-data', require('./home/map-data'))
+home.get('/formindex-data', require('./home/formindex-data'))
+
+//将路由对象做为模块成员进行导出
+module.exports = home
