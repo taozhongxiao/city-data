@@ -52,12 +52,7 @@
                 placeholder="请选择时间"
                 @change="handleYearChange"
               >
-                <el-option label="2020" value="2020"></el-option>
-                <el-option label="2019" value="2019"></el-option>
-                <el-option label="2018" value="2018"></el-option>
-                <el-option label="2017" value="2017"></el-option>
-                <el-option label="2016" value="2016"></el-option>
-                <el-option label="2015" value="2015"></el-option>
+                <el-option v-for="item in years" :key="item" :label="item" :value="item"></el-option>
               </el-select>
             </el-form-item>
 
@@ -103,6 +98,7 @@
 <script>
 import chinaMapJson from '../assets/map/china-province.json'
 import chinaCityMapJson from '../assets/map/china-province-city.json'
+import { getProvinceCityName } from '../utils/getProvinceCityName'
 import { getProvinceName } from '../utils/getProvinceName'
 import { getProvinceCode } from '../utils/getProvinceCode'
 
@@ -111,15 +107,19 @@ export default {
     return {
       chinaMap: '',
       myChart: '',
+      myChartColumn: '',
       queryMapInfo: {
         year: 2019,
         quarter: '',
         dataIndeCate3: '人均地区生产总值',
-        level: '省级行政区'
+        level: '省级行政区',
+        // 决定加载具体的省份名
+        provinceToMap: ''
       },
       // 地图数据
       mapData: [],
       // 柱状图种类
+      columnData: [],
       columnCategory: [],
       // 柱状图值
       columnValue: [],
@@ -131,22 +131,31 @@ export default {
       index: [],
       // 决定加载地图和相应数据的方式 0: 省级 / 1:地级市 / else:其他
       code: 0,
-      // 决定加载具体的省份名称
-      provinceToMap: ''
+      years: []
     }
   },
-  mounted() {
-  },
-  created() {
-    this.getMapData()
-    this.getFormIndexData()
+  mounted() {},
+  async created() {
+    await this.getMapData()
+    await this.getFormIndexData()
+    await this.getTimeIndexData()
+    this.drawMapGraph(0)
+    this.drawBarGraph()
   },
   methods: {
     drawMapGraph(code, name) {
+      const that = this
+      if (
+        this.myChart !== null &&
+        this.myChart !== '' &&
+        this.myChart !== undefined
+      ) {
+        this.myChart.dispose()
+      }
       this.myChart = this.$echarts.init(document.getElementById('myChart'))
       let optionMap
-      // 省级行政区
       if (code === 0) {
+        // 省级行政区
         this.loadMapJson(code)
         this.$echarts.registerMap('chinaMap', this.chinaMap)
         optionMap = {
@@ -221,6 +230,7 @@ export default {
           ]
         }
       } else if (code === 1) {
+        // 地级行政区
         this.$echarts.registerMap('chinaMap', this.chinaMap)
         optionMap = {
           title: {
@@ -238,10 +248,11 @@ export default {
             show: true,
             trigger: 'item',
             formatter: function(params) {
+              console.log(params)
               const info = getProvinceName(params.name)
               const value = params.value
               if (info) {
-                return info + params.value
+                return info + ', ' + params.name + ', ' + params.value
               } else {
                 return String(value)
               }
@@ -294,6 +305,7 @@ export default {
           ]
         }
       } else {
+        // 单个省
         this.loadMapJson(code)
         this.$echarts.registerMap('chinaMap', this.chinaMap)
         optionMap = {
@@ -309,25 +321,6 @@ export default {
             },
             padding: 15
           },
-          // tooltip: {
-          //   show: true,
-          //   trigger: 'item',
-          //   formatter: function(params) {
-          //     const info = getProvinceName(params.name)
-          //     const value = params.value
-          //     if (info) {
-          //       return info + params.value
-          //     } else {
-          //       return String(value)
-          //     }
-          //   },
-          //   padding: 5,
-          //   backgroundColor: '#eeeeee',
-          //   textStyle: {
-          //     fontSize: 10,
-          //     fontWeight: 'bolder'
-          //   }
-          // },
           visualMap: {
             min: this.min,
             max: this.max,
@@ -350,6 +343,20 @@ export default {
             },
             padding: [0, 0, 15, 0]
           },
+          tooltip: {
+            show: true,
+            trigger: 'item',
+            formatter: function(params) {
+              const value = params.value
+              return String(value)
+            },
+            padding: 5,
+            backgroundColor: '#eeeeee',
+            textStyle: {
+              fontSize: 10,
+              fontWeight: 'bolder'
+            }
+          },
           series: [
             {
               type: 'map',
@@ -360,101 +367,291 @@ export default {
                 min: 1,
                 max: 4
               },
-              // center: [104.2363, 35.8572],
-              itemStyle: {
-                // borderWidth: 0
-              },
+              itemStyle: {},
               data: this.mapData
+              // label: {
+              //   show: true,
+              //   fontSize: '12px'
+              // }
             }
           ]
         }
       }
       this.myChart.setOption(optionMap, true)
-      const that = this
-      this.myChart.on('click', function(arg) {
+      this.myChart.on('click', async function(arg) {
         that.code = getProvinceCode(arg.name)
         that.queryMapInfo.level = '地级行政区'
-        that.provinceToMap = arg.name
-        that.getMapData()
-        that.drawMapGraph(code, arg.name)
-        console.log(that.mapData)
-      })
-      this.myChart.on('mouseover', function(params) {
-        // console.log(params)
-        that.myChartColumn.dispatchAction({
-          type: 'highlight',
-          dataIndex: params.dataIndex,
-          seriesIndex: 0
+        that.clearMap()
+        await that.getMapData()
+        const provinceColumn = getProvinceCityName(arg.name)
+        that.columnData = that.columnData.filter(function(item) {
+          return provinceColumn.find(value => {
+            return value.name === item.name
+          })
         })
+        that.columnValue = []
+        that.columnCategory = []
+        for (var i = 0; i < that.columnData.length; i++) {
+          that.columnCategory.push(that.columnData[i].name)
+          that.columnValue.push(that.columnData[i].value)
+        }
+        that.replaceCategory(that.columnCategory)
+        // that.columnCategory.forEach((value, index, arr) => {
+        //   // console.log(value.length)
+        //   if (value.length === 6) {
+        //     arr[index] = value.slice(0, 3)
+        //   } else if (value.length > 4) {
+        //     arr[index] = value.slice(0, 2)
+        //   } else {
+        //     arr[index] = value.slice(0, value.length - 1)
+        //   }
+        // })
+        // that.mapData.filter(function(item) {
+        //   return item.name = arg.name
+        // })
+        that.drawMapGraph(that.code, arg.name)
+        that.drawBarGraph()
+        // console.log(arg)
       })
-      this.myChart.on('mouseout', function(params) {
-        that.myChartColumn.dispatchAction({
-          type: 'downplay',
-          dataIndex: params.dataIndex,
-          seriesIndex: 0
+      if (this.code === 0 || this.code === 1) {
+        this.myChart.on('mouseover', function(params) {
+          console.log(params)
+          that.myChartColumn.dispatchAction({
+            type: 'highlight',
+            dataIndex: params.dataIndex
+            // name: params.name
+            // value: params.value,
+            // seriesIndex: 0
+          })
         })
-      })
+        this.myChart.on('mouseout', function(params) {
+          that.myChartColumn.dispatchAction({
+            type: 'downplay',
+            dataIndex: params.dataIndex
+            // seriesIndex: 0
+          })
+        })
+      }
     },
     drawBarGraph() {
+      // const that = this
+      if (
+        this.myChartColumn !== null &&
+        this.myChartColumn !== '' &&
+        this.myChartColumn !== undefined
+      ) {
+        this.myChartColumn.dispose()
+      }
       this.myChartColumn = this.$echarts.init(
         document.getElementById('myChartColumn')
       )
-      const optionColumn = {
-        xAxis: {
-          type: 'value',
-          inverse: false,
-          splitNumber: 3
-        },
-        yAxis: {
-          type: 'category',
-          data: this.columnCategory,
-          axisTick: {
-            alignWithLabel: true
-          }
-        },
-        grid: {
-          top: 15,
-          bottom: 35,
-          left: 60,
-          right: 40
-        },
-        series: [
-          {
-            type: 'bar',
-            itemStyle: {
-              color: '#cd5651',
-              borderRadius: [0, 7, 7, 0]
+      // this.myChartColumn = this.$echarts.init(
+      //   document.getElementById('myChartColumn')
+      // )
+      let optionColumn
+      if (this.code === 1) {
+        optionColumn = {
+          xAxis: {
+            type: 'value',
+            inverse: false,
+            splitNumber: 2
+          },
+          yAxis: {
+            type: 'category',
+            axisTick: {
+              alignWithLabel: true
             },
-            emphasis: {
+            data: this.columnCategory
+          },
+          grid: {
+            top: 15,
+            bottom: 35,
+            left: 70,
+            right: 40
+          },
+          // dataset: {
+          //   source: this.mapData
+          // },
+          series: [
+            {
+              type: 'bar',
               itemStyle: {
-                color: 'rgb(250, 208, 1)',
+                color: '#cd5651',
                 borderRadius: [0, 7, 7, 0]
-              }
-            },
-            label: {
-              show: true,
-              position: 'right',
-              formatter: function(p) {
-                let value = ''
-                if (p.value > 0) {
-                  value = p.value
-                  if (value > 999) {
-                    // 数值加千分号
-                    const parts = value.toString().split('.')
-                    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-                    value = parts.join('.')
-                  }
+              },
+              emphasis: {
+                itemStyle: {
+                  color: 'rgb(250, 208, 1)',
+                  borderRadius: [0, 7, 7, 0]
                 }
-                return value
+              },
+              barMinWidth: 12,
+              barMaxWidth: 12,
+              barCategoryGap: '50%',
+              data: this.columnValue,
+              label: {
+                show: true,
+                position: 'right',
+                formatter: function(p) {
+                  let value = ''
+                  if (p.value > 0) {
+                    value = p.value
+                    if (value > 999) {
+                      // 数值加千分号
+                      const parts = value.toString().split('.')
+                      parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                      value = parts.join('.')
+                    }
+                  }
+                  return value
+                }
               }
+            }
+          ],
+          dataZoom: [
+            {
+              realtime: true,
+              type: 'inside', // 有type这个属性，滚动条在最下面，也可以不行，写y：36，这表示距离顶端36px，一般就是在图上面。
+              orient: 'vertical',
+              start: 92, // 表示默认展示20%～80%这一段。
+              end: 100,
+              maxValueSpan: 31,
+              minValueSpan: 25
+            }
+          ]
+        }
+      } else if (this.code === 0) {
+        optionColumn = {
+          xAxis: {
+            type: 'value',
+            inverse: false,
+            splitNumber: 2
+          },
+          yAxis: {
+            type: 'category',
+            axisTick: {
+              alignWithLabel: true
             },
-            data: this.columnValue
-          }
-        ]
+            data: this.columnCategory
+          },
+          grid: {
+            top: 15,
+            bottom: 35,
+            left: 70,
+            right: 40
+          },
+          // dataset: {
+          //   source: this.mapData
+          // },
+          series: [
+            {
+              type: 'bar',
+              itemStyle: {
+                color: '#cd5651',
+                borderRadius: [0, 7, 7, 0]
+              },
+              emphasis: {
+                itemStyle: {
+                  color: 'rgb(250, 208, 1)',
+                  borderRadius: [0, 7, 7, 0]
+                }
+              },
+              data: this.columnValue,
+              label: {
+                show: true,
+                position: 'right',
+                formatter: function(p) {
+                  let value = ''
+                  if (p.value > 0) {
+                    value = p.value
+                    if (value > 999) {
+                      // 数值加千分号
+                      const parts = value.toString().split('.')
+                      parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                      value = parts.join('.')
+                    }
+                  }
+                  return value
+                }
+              }
+            }
+          ]
+        }
+      } else {
+        optionColumn = {
+          xAxis: {
+            type: 'value',
+            inverse: false,
+            splitNumber: 2
+          },
+          yAxis: {
+            type: 'category',
+            axisTick: {
+              alignWithLabel: true
+            },
+            data: this.columnCategory
+          },
+          grid: {
+            top: 15,
+            bottom: 35,
+            left: 70,
+            right: 40
+          },
+          // dataset: {
+          //   source: this.mapData
+          // },
+          series: [
+            {
+              type: 'bar',
+              itemStyle: {
+                color: '#cd5651',
+                borderRadius: [0, 7, 7, 0]
+              },
+              emphasis: {
+                itemStyle: {
+                  color: 'rgb(250, 208, 1)',
+                  borderRadius: [0, 7, 7, 0]
+                }
+              },
+              barMinWidth: 12,
+              barMaxWidth: 12,
+              barCategoryGap: '50%',
+              data: this.columnValue,
+              label: {
+                show: true,
+                position: 'right',
+                formatter: function(p) {
+                  let value = ''
+                  if (p.value > 0) {
+                    value = p.value
+                    if (value > 999) {
+                      // 数值加千分号
+                      const parts = value.toString().split('.')
+                      parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                      value = parts.join('.')
+                    }
+                  }
+                  return value
+                }
+              }
+            }
+          ],
+          dataZoom: [
+            {
+              realtime: true,
+              type: 'inside', // 有type这个属性，滚动条在最下面，也可以不行，写y：36，这表示距离顶端36px，一般就是在图上面。
+              orient: 'vertical',
+              start: 92, // 表示默认展示20%～80%这一段。
+              end: 100,
+              maxValueSpan: 31,
+              minValueSpan: 25
+            }
+          ]
+        }
       }
       this.myChartColumn.setOption(optionColumn, true)
       this.myChartColumn.on('mouseover', function(params) {
-        // console.log(params)
+        console.log(params)
       })
     },
     async getFormIndexData() {
@@ -532,6 +729,20 @@ export default {
       })
       // console.log(this.options)
     },
+    async getTimeIndexData() {
+      this.years = []
+      const { data: res } = await this.$http.get('/timeindex-data', {
+        params: { level: this.queryMapInfo.level }
+      })
+      console.log(res)
+      const that = this
+      for (var i = 0; i < res.data.formData.length; i++) {
+        console.log(res.data.formData[i])
+        if (that.years.indexOf(res.data.formData[i].year) === -1) {
+          that.years.push(res.data.formData[i].year)
+        }
+      }
+    },
     async getMapData() {
       const { data: res } = await this.$http.get('/map-data', {
         params: this.queryMapInfo
@@ -542,93 +753,153 @@ export default {
       for (let i = 0; i < provinceArray.length; i++) {
         const newdata = {}
         newdata.name = provinceArray[i]
-        newdata.value = Math.round(Number(res.data.mapData[0][provinceArray[i]]))
+        newdata.value = Math.round(
+          Number(res.data.mapData[0][provinceArray[i]])
+        )
         if (newdata.value) {
           that.mapData.push(newdata)
+          // that.columnData[newdata.name] = newdata.value
         }
       }
+      // console.log(this.mapData)
       this.mapData.sort(function(a, b) {
         return a.value - b.value
       })
+      this.deepCopy(this.mapData, this.columnData)
       // console.log(this.mapData)
       // console.log(1)
       for (let i = 0; i < this.mapData.length; i++) {
-        if (this.mapData[i].value) {
-          that.columnCategory.push(this.mapData[i].name)
-          that.columnValue.push(this.mapData[i].value)
-        }
+        // that.columnData[this.mapData[i].name] = this.mapData[i].value
+        that.columnCategory.push(this.mapData[i].name)
+        that.columnValue.push(this.mapData[i].value)
       }
-      this.columnCategory.forEach((value, index, arr) => {
-        // console.log(value.length)
-        if (value.length === 6) {
-          arr[index] = value.slice(0, 3)
-        } else if (value.length > 4) {
-          arr[index] = value.slice(0, 2)
-        } else {
-          arr[index] = value.slice(0, value.length - 1)
-        }
-      })
+      // console.log(this.columnValue)
+      // console.log(this.columnData)
+      // console.log(this.mapData)
+      this.replaceCategory(this.columnCategory)
+      // this.columnCategory.forEach((value, index, arr) => {
+      //   // console.log(value.length)
+      //   if (value.length === 6) {
+      //     arr[index] = value.slice(0, 3)
+      //   } else if (value.length > 4) {
+      //     arr[index] = value.slice(0, 2)
+      //   } else {
+      //     arr[index] = value.slice(0, value.length - 1)
+      //   }
+      // })
       this.min = Math.min.apply(null, this.columnValue)
       this.max = Math.max.apply(null, this.columnValue)
-      this.columnCategory = this.columnCategory.slice(-31)
-      this.columnValue = this.columnValue.slice(-31)
+      // this.columnCategory = this.columnCategory.slice(-31)
+      // this.columnValue = this.columnValue.slice(-31)
       // console.log(this.columnCategory)
       // console.log(this.columnValue)
       // console.log(this.mapData)
+    },
+    loadMapJson(code) {
+      if (code === 0) {
+        // 省级行政区
+        this.chinaMap = chinaMapJson
+      } else if (code === 1) {
+        // 地级行政区
+        this.chinaMap = chinaCityMapJson
+      } else {
+        // 单个省
+        const currentMap = require('../assets/map/province/' + code + '.json')
+        this.chinaMap = currentMap
+      }
+    },
+    async handleIndexChange(value) {
+      this.queryMapInfo.dataIndeCate3 = value[2]
+      console.log(this.queryMapInfo.dataIndeCate3)
+      this.clearMap()
+      await this.getMapData()
+      const that = this
       if (this.queryMapInfo.level === '省级行政区') {
+        that.code = 0
+        that.loadMapJson(0)
         that.drawMapGraph(0)
       } else if (this.code !== 0 && this.code !== 1) {
-        that.drawMapGraph(that.code, that.provinceToMap)
+        that.drawMapGraph(that.code, that.queryMapInfo.provinceToMap)
       } else {
+        that.code = 1
+        that.loadMapJson(1)
         that.drawMapGraph(1)
       }
       this.drawBarGraph()
     },
-    loadMapJson(code) {
-      if (code === 0) {
-        this.chinaMap = chinaMapJson
-      } else {
-        const currentMap = require('../assets/map/province/' + code + '.json')
-        // console.log(3)
-        this.chinaMap = currentMap
-      }
-    },
-    handleIndexChange(value) {
-      this.queryMapInfo.dataIndeCate3 = value[2]
-      // console.log(value[2])
+    // 年份改变
+    async handleYearChange() {
       this.clearMap()
-      this.getMapData()
-    },
-    handleYearChange() {
-      this.clearMap()
-      this.getMapData()
-    },
-    handleLevelChange() {
+      await this.getMapData()
       const that = this
-      // console.log(this.queryMapInfo.level)
-      if (this.queryMapInfo.level === '地级行政区') {
-        that.chinaMap = chinaCityMapJson
-        that.queryMapInfo.dataIndeCate3 = '地区生产总值'
-        that.clearMap()
-        that.getMapData()
+      if (this.queryMapInfo.level === '省级行政区') {
+        that.code = 0
+        that.loadMapJson(0)
+        that.drawMapGraph(0)
+      } else if (this.code !== 0 && this.code !== 1) {
+        that.drawMapGraph(that.code, that.queryMapInfo.provinceToMap)
       } else {
-        that.queryMapInfo.level = '省级行政区'
-        that.clearMap()
-        that.getMapData()
+        that.code = 1
+        that.loadMapJson(1)
+        that.drawMapGraph(1)
       }
+      this.drawBarGraph()
     },
-    clearMap () {
-      this.columnValue = []
+    async handleLevelChange() {
+      const that = this
+      if (this.queryMapInfo.level === '地级行政区') {
+        that.code = 1
+        that.loadMapJson(1)
+        // that.queryMapInfo.dataIndeCate3 = '人均地区生产总值'
+        that.clearMap()
+        await that.getMapData()
+        // that.columnValue = that.columnValue.slice(-20)
+        // that.columnCategory = that.columnCategory.slice(-20)
+        that.drawMapGraph(1)
+      } else {
+        that.code = 0
+        that.loadMapJson(0)
+        // that.queryMapInfo.dataIndeCate3 = '人均地区生产总值'
+        that.clearMap()
+        await that.getMapData()
+        that.drawMapGraph(0)
+      }
+      this.drawBarGraph()
+    },
+    clearMap() {
+      this.columnData = []
       this.mapData = []
+      this.columnValue = []
       this.columnCategory = []
       this.min = ''
       this.max = ''
       this.unit = ''
+    },
+    deepCopy(p, c) {
+      c = c || {}
+      for (var i in p) {
+        if (typeof p[i] === 'object') {
+          c[i] = p[i].constructor === Array ? [] : {}
+          this.deepCopy(p[i], c[i])
+        } else {
+          c[i] = p[i]
+        }
+      }
+      return c
+    },
+    replaceCategory(arr) {
+      arr.forEach((value, index, arr) => {
+        arr[index] = value.replace(
+          /省|地区|柯尔克孜自治州|回族自治区|彝族自治州|哈尼族彝族自治州|傣族自治州|布依族苗族自治州|朝鲜族自治州|藏族羌族自治州|傈僳族自治州|土家族自治州|哈尼族彝族自治州|土家族苗族自治州|壮族苗族自治州|苗族侗族自治州|白族自治州|藏族自治州|蒙古族藏族自治州|回族自治州|蒙古自治州|哈萨克自治州|壮族自治区|自治州|自治区|维吾尔自治区|维吾尔自治州|市|盟/,
+          ''
+        )
+      })
     }
   },
   watch: {
-    'queryMapInfo.level'(val) {
-      this.getFormIndexData()
+    async 'queryMapInfo.level'(val) {
+      await this.getFormIndexData()
+      await this.getTimeIndexData()
     }
   }
 }
@@ -783,6 +1054,8 @@ header {
   height: 100%;
   // float: left;
   box-sizing: border-box;
+  z-index: 1000;
+  overflow: auto;
   // background-color: #f3f3f4;
   // border-top: 2px solid #000000;
   // border-bottom: 2px solid #000000;
