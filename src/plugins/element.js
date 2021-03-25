@@ -39,6 +39,8 @@ import {
   CarouselItem,
   Radio,
   RadioGroup,
+  CheckboxGroup,
+  Checkbox,
   Cascader
 } from 'element-ui'
 
@@ -79,6 +81,8 @@ Vue.use(Carousel)
 Vue.use(CarouselItem)
 Vue.use(Radio)
 Vue.use(RadioGroup)
+Vue.use(CheckboxGroup)
+Vue.use(Checkbox)
 Vue.use(Cascader)
 
 Vue.prototype.$message = Message

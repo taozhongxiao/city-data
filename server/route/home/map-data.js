@@ -13,9 +13,7 @@ module.exports = async (req, res, next) => {
         data: { mapData , message: '获取省级地图依赖数据成功' }
     }) 
   } else {
-    console.log(1)
     const mapData = await City.find({ $and: [{ dataIndeCate3: cate }, { year: year }] }, '')   
-    console.log(2)
     res
       .send({
         meta: { status: 200 },

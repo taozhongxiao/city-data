@@ -1,14 +1,14 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../components/Home.vue'
-import Bbs from '../components/home/BBS.vue'
-import City from '../components/home/City.vue'
-import People from '../components/home/People.vue'
-import Province from '../components/home/Province.vue'
+import Home from '../views/Home.vue'
+import Bbs from '../views/home/BBS.vue'
+import City from '../views/home/City.vue'
+import People from '../views/home/People.vue'
+import Province from '../views/home/Province.vue'
 
-import Admin from '../components/admin/Admin.vue'
-import Provincedata from '../components/admin/data/Province-data.vue'
-import Welcome from '../components/admin/Welcome.vue'
+import Admin from '../views/admin/Admin.vue'
+import Provincedata from '../views/admin/data/Province-data.vue'
+import Welcome from '../views/admin/Welcome.vue'
 
 Vue.use(VueRouter)
 

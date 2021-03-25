@@ -52,7 +52,12 @@
                 placeholder="请选择时间"
                 @change="handleYearChange"
               >
-                <el-option v-for="item in years" :key="item" :label="item" :value="item"></el-option>
+                <el-option
+                  v-for="item in years"
+                  :key="item"
+                  :label="item"
+                  :value="item"
+                ></el-option>
               </el-select>
             </el-form-item>
 
@@ -381,21 +386,23 @@ export default {
       this.myChart.on('click', async function(arg) {
         that.code = getProvinceCode(arg.name)
         that.queryMapInfo.level = '地级行政区'
-        that.clearMap()
-        await that.getMapData()
-        const provinceColumn = getProvinceCityName(arg.name)
-        that.columnData = that.columnData.filter(function(item) {
-          return provinceColumn.find(value => {
-            return value.name === item.name
-          })
-        })
-        that.columnValue = []
-        that.columnCategory = []
-        for (var i = 0; i < that.columnData.length; i++) {
-          that.columnCategory.push(that.columnData[i].name)
-          that.columnValue.push(that.columnData[i].value)
-        }
-        that.replaceCategory(that.columnCategory)
+        that.queryMapInfo.provinceToMap = arg.name
+        that.mapLevelChange(that.code, arg.name)
+        // that.clearMap()
+        // await that.getMapData()
+        // const provinceColumn = getProvinceCityName(arg.name)
+        // that.columnData = that.columnData.filter(function(item) {
+        //   return provinceColumn.find(value => {
+        //     return value.name === item.name
+        //   })
+        // })
+        // that.columnValue = []
+        // that.columnCategory = []
+        // for (var i = 0; i < that.columnData.length; i++) {
+        //   that.columnCategory.push(that.columnData[i].name)
+        //   that.columnValue.push(that.columnData[i].value)
+        // }
+        // that.replaceCategory(that.columnCategory)
         // that.columnCategory.forEach((value, index, arr) => {
         //   // console.log(value.length)
         //   if (value.length === 6) {
@@ -409,8 +416,8 @@ export default {
         // that.mapData.filter(function(item) {
         //   return item.name = arg.name
         // })
-        that.drawMapGraph(that.code, arg.name)
-        that.drawBarGraph()
+        // that.drawMapGraph(that.code, arg.name)
+        // that.drawBarGraph()
         // console.log(arg)
       })
       if (this.code === 0 || this.code === 1) {
@@ -613,8 +620,8 @@ export default {
                   borderRadius: [0, 7, 7, 0]
                 }
               },
-              barMinWidth: 12,
-              barMaxWidth: 12,
+              // barMinWidth: 12,
+              // barMaxWidth: 12,
               barCategoryGap: '50%',
               data: this.columnValue,
               label: {
@@ -635,18 +642,18 @@ export default {
                 }
               }
             }
-          ],
-          dataZoom: [
-            {
-              realtime: true,
-              type: 'inside', // 有type这个属性，滚动条在最下面，也可以不行，写y：36，这表示距离顶端36px，一般就是在图上面。
-              orient: 'vertical',
-              start: 92, // 表示默认展示20%～80%这一段。
-              end: 100,
-              maxValueSpan: 31,
-              minValueSpan: 25
-            }
           ]
+          // dataZoom: [
+          //   {
+          //     realtime: true,
+          //     type: 'inside', // 有type这个属性，滚动条在最下面，也可以不行，写y：36，这表示距离顶端36px，一般就是在图上面。
+          //     orient: 'vertical',
+          //     start: 92, // 表示默认展示20%～80%这一段。
+          //     end: 100,
+          //     maxValueSpan: 31,
+          //     minValueSpan: 25
+          //   }
+          // ]
         }
       }
       this.myChartColumn.setOption(optionColumn, true)
@@ -810,7 +817,7 @@ export default {
     },
     async handleIndexChange(value) {
       this.queryMapInfo.dataIndeCate3 = value[2]
-      console.log(this.queryMapInfo.dataIndeCate3)
+      // console.log(this.queryMapInfo.dataIndeCate3)
       this.clearMap()
       await this.getMapData()
       const that = this
@@ -819,7 +826,10 @@ export default {
         that.loadMapJson(0)
         that.drawMapGraph(0)
       } else if (this.code !== 0 && this.code !== 1) {
-        that.drawMapGraph(that.code, that.queryMapInfo.provinceToMap)
+        console.log(that.code)
+        console.log(that.queryMapInfo.provinceToMap)
+        that.mapLevelChange(that.code, that.queryMapInfo.provinceToMap)
+        // that.drawMapGraph(that.code, that.queryMapInfo.provinceToMap)
       } else {
         that.code = 1
         that.loadMapJson(1)
@@ -837,7 +847,8 @@ export default {
         that.loadMapJson(0)
         that.drawMapGraph(0)
       } else if (this.code !== 0 && this.code !== 1) {
-        that.drawMapGraph(that.code, that.queryMapInfo.provinceToMap)
+        that.mapLevelChange(that.code, that.queryMapInfo.provinceToMap)
+        // that.drawMapGraph(that.code, that.queryMapInfo.provinceToMap)
       } else {
         that.code = 1
         that.loadMapJson(1)
@@ -894,6 +905,25 @@ export default {
           ''
         )
       })
+    },
+    async mapLevelChange(code, name) {
+      this.clearMap()
+      await this.getMapData()
+      const provinceColumn = getProvinceCityName(name)
+      this.columnData = this.columnData.filter(function(item) {
+        return provinceColumn.find(value => {
+          return value.name === item.name
+        })
+      })
+      this.columnValue = []
+      this.columnCategory = []
+      for (var i = 0; i < this.columnData.length; i++) {
+        this.columnCategory.push(this.columnData[i].name)
+        this.columnValue.push(this.columnData[i].value)
+      }
+      this.replaceCategory(this.columnCategory)
+      this.drawMapGraph(code, name)
+      this.drawBarGraph()
     }
   },
   watch: {
@@ -951,9 +981,9 @@ header {
   margin-top: 50px;
   .main-map {
     // float: right;
-    width: 92%;
-    padding: 0 4%;
-    height: 78vh;
+    margin: 0 auto;
+    max-width: 1311px;
+    height: 546px;
     overflow: hidden;
     display: flex;
     justify-content: space-between;
@@ -1063,8 +1093,8 @@ header {
 
 footer {
   height: 40px;
-  margin: 0 4%;
-  width: 92%;
+  margin: 0 auto;
+  max-width: 1311px;
   margin-top: 50px;
   border-top: 1px solid #e1e2e1;
   line-height: 40px;
