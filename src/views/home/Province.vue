@@ -465,6 +465,23 @@ export default {
       this.provinceChart.on('click', function(arg) {
         that.showProvinceDetail(arg.name)
       })
+      function resizeMapGraph() {
+        that.provinceChart.resize()
+      }
+      function throttleMap(fn, delay) {
+        let pre = 0
+        return function() {
+          const now = new Date().getTime()
+          const context = this
+          const args = arguments
+          if (now - pre >= delay) {
+            fn.apply(context, args)
+            console.log('now', now)
+            pre = now
+          }
+        }
+      }
+      window.addEventListener('resize', throttleMap(resizeMapGraph, 1000))
     },
     showProvinceDetail(name) {
       const detail = {}
@@ -1076,14 +1093,6 @@ header {
   border-radius: 5%;
   overflow: hidden;
   background-color: #fafafb;
-}
-
-#provinceChartColumn {
-  min-width: 25%;
-  height: 100%;
-  box-sizing: border-box;
-  border-top: 2px solid #000000;
-  border-bottom: 2px solid #000000;
 }
 
 section {

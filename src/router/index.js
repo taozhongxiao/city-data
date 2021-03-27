@@ -29,13 +29,25 @@ const routes = [
     redirect: 'welcome',
     children: [
       { path: '/welcome', component: Welcome, meta: { requireAuth: true } },
-      { path: '/admin/province-data', component: Provincedata, meta: { requireAuth: true } }
+      {
+        path: '/admin/province-data',
+        component: Provincedata,
+        meta: { requireAuth: true }
+      }
     ]
   }
 ]
 
 const router = new VueRouter({
-  routes
+  routes,
+  scrollBehavior(to, from, savedPosition) {
+    // 解决跳转下一个页面底部的方法
+    if (savedPosition) {
+      return savedPosition
+    } else {
+      return { x: 0, y: 0 }
+    }
+  }
 })
 
 router.beforeEach((to, from, next) => {

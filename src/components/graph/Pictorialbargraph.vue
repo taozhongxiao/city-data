@@ -62,7 +62,8 @@ export default {
             },
             symbol: this.data[3],
             symbolRepeat: true,
-            symbolMargin: '25%!'
+            symbolMargin: '25%!',
+            barMaxWidth: '30px'
             // symbolSize: ['80%', '80%']
           },
           {
@@ -73,7 +74,8 @@ export default {
             },
             symbol: this.data[3],
             symbolRepeat: true,
-            symbolMargin: '25%!'
+            symbolMargin: '25%!',
+            barMaxWidth: '30px'
             // symbolSize: ['80%', '80%']
           },
           {
@@ -84,7 +86,8 @@ export default {
             },
             symbol: this.data[3],
             symbolRepeat: true,
-            symbolMargin: '25%!'
+            symbolMargin: '25%!',
+            barMaxWidth: '30px'
             // symbolSize: ['80%', '80%']
           }
         ],

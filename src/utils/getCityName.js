@@ -1938,54 +1938,26 @@ const provinceCityName = [
       {
         code: '6543',
         name: '阿勒泰地区'
-      },
-      {
-        code: '659001',
-        name: '石河子市'
-      },
-      {
-        code: '659002',
-        name: '阿拉尔市'
-      },
-      {
-        code: '659003',
-        name: '图木舒克市'
-      },
-      {
-        code: '659004',
-        name: '五家渠市'
-      },
-      {
-        code: '659005',
-        name: '北屯市'
-      },
-      {
-        code: '659006',
-        name: '铁门关市'
-      },
-      {
-        code: '659007',
-        name: '双河市'
-      },
-      {
-        code: '659008',
-        name: '可克达拉市'
-      },
-      {
-        code: '659009',
-        name: '昆玉市'
-      },
-      {
-        code: '659010',
-        name: '胡杨河市'
       }
     ]
   }
 ]
 
-export function getProvinceCityName(name) {
-  const obj = provinceCityName.find(function(item) {
-    return item.name === name
-  })
-  return obj.children
+export function getCityName(name) {
+  if (
+    name !== '北京市' &&
+    name !== '天津市' &&
+    name !== '重庆市' &&
+    name !== '上海市'
+  ) {
+    const obj = provinceCityName.find(function(item) {
+      return item.name === name
+    })
+    const arr = []
+    obj.children.forEach(item => {
+      arr.push(item.name)
+    })
+    return arr
+  }
+  return false
 }

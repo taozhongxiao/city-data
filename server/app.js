@@ -3,19 +3,31 @@ const app = express()
 const path = require('path')
 const bodyParser = require('body-parser')
 const session = require('express-session')
-const cors = require('cors') 
+const cors = require('cors')
+const fs = require('fs')
+const https = require('https')
 
-app.use(bodyParser.json({ limit:'100mb' }));
-app.use(bodyParser.urlencoded({ extended: false, limit:'100mb' }))
+// app.use(bodyParser.json({ limit: '100mb' }))
+// app.use(bodyParser.urlencoded({ extended: false, limit: '100mb' }))
 app.use('/uploads', express.static(__dirname + '/uploads'))
 // app.set('secret', '221jsfasfcfdsklfj1')
 
+// const privateKey = fs.readFileSync('city-data.com.cn_key.key', 'utf8')
+// const certificate = fs.readFileSync('city-data.com.cn_csr.pem', 'utf8')
+// const credentials = { key: privateKey, cert: certificate }
+// const httpsServer = https.createServer(credentials, app)
+// httpsServer.listen(443, function() {
+//   console.log('HTTPS Server is running on: https://localhost:%s', SSLPORT)
+// })
+
 // app.use(session({ secret: 'taozhongxiao111' }))
-app.use(cors({  
-  origin:['http://localhost:8080'],
-  methods:['GET','POST','PUT','DELETE'],
-  alloweHeaders:['Content-Type', 'Authorization']
-}))
+app.use(
+  cors({
+    origin: ['http://localhost:8080'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    alloweHeaders: ['Content-Type', 'Authorization']
+  })
+)
 
 // app.use(cors())
 
@@ -32,7 +44,7 @@ const admin = require('./route/admin')
 //   res.setHeader("Access-Control-Allow-Origin", '*');
 //   res.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
 //   res.setHeader("Access-Control-Max-Age", "3600");
-//   res.setHeader("Access-Control-Allow-Headers", "x-requested-with, Authorization, token, content-type"); //这里要加上content-type 
+//   res.setHeader("Access-Control-Allow-Headers", "x-requested-with, Authorization, token, content-type"); //这里要加上content-type
 //   res.setHeader("Access-Control-Allow-Credentials", "true");
 //   next();
 // });

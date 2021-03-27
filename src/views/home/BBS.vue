@@ -93,6 +93,7 @@ export default {}
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  background-color: #fcfeff;
 }
 header {
   border-bottom: 1px solid #e1e2e1;
