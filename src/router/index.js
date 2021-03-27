@@ -6,10 +6,6 @@ import City from '../views/home/City.vue'
 import People from '../views/home/People.vue'
 import Province from '../views/home/Province.vue'
 
-import Admin from '../views/admin/Admin.vue'
-import Provincedata from '../views/admin/data/Province-data.vue'
-import Welcome from '../views/admin/Welcome.vue'
-
 Vue.use(VueRouter)
 
 const routes = [
@@ -21,21 +17,7 @@ const routes = [
   { path: '/province', component: Province },
   { path: '/people', component: People },
   { path: '/city', component: City },
-  { path: '/bbs', component: Bbs },
-  {
-    path: '/admin',
-    component: Admin,
-    meta: { requireAuth: true },
-    redirect: 'welcome',
-    children: [
-      { path: '/welcome', component: Welcome, meta: { requireAuth: true } },
-      {
-        path: '/admin/province-data',
-        component: Provincedata,
-        meta: { requireAuth: true }
-      }
-    ]
-  }
+  { path: '/bbs', component: Bbs }
 ]
 
 const router = new VueRouter({
