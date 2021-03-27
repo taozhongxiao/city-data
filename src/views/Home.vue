@@ -9,7 +9,12 @@
         <router-link to="/city"><span>城市对比</span></router-link>
         <router-link to="/province"><span>省份对比</span></router-link>
         <router-link to="/bbs"><span>论坛</span></router-link>
-        <span>搜索</span>
+        <span></span>
+        <div class="mainMenuSearch">
+          <input type="text" placeholder="搜索" />
+          <i class="el-icon-search" style="font-size: 18px"></i>
+        </div>
+        <span></span>
         <router-link to="/people" class="people"
           ><span>个人中心</span></router-link
         >
@@ -76,11 +81,10 @@
 
           <!-- 论坛banner区 -->
           <div class="homepic">
-            <span>#湖北城市论坛</span>
-            <img
-              src="../../server/uploads/img/province-city-img/wuhan.jpg"
-              alt=""
-            />
+            <router-link to="/bbs">
+              <span>#{{ imgInfo.name }}</span>
+              <img :src="imgInfo.url" alt="" />
+            </router-link>
           </div>
         </div>
         <div class="graph">
@@ -88,14 +92,59 @@
           <div id="myChartColumn"></div>
         </div>
       </div>
-      <div class="secondclass">
-        <div>fuck</div>
+      <div class="cityCompare">
+        <div class="cityCompareTitle">
+          <p>探索城市数据</p>
+          <span
+            >国民经济、人口、财政、就业及工资、资源与环境等多维度数据，全方位对比中国城市。</span
+          >
+          <div>
+            <router-link to="/city"
+              ><div><span>对比城市</span></div></router-link
+            >
+            <router-link to="/province"
+              ><div><span>对比省份</span></div></router-link
+            >
+          </div>
+        </div>
+        <div class="cityImg">
+          <img src="../assets/528.jpg" alt="" />
+        </div>
+      </div>
+      <div class="bbsArea">
+        <div class="bbsContent">
+          <div class="bbsContentC">
+            <p>交流城市发展</p>
+            <span
+              >分享你在城市的生活感受、对城市发展的见解、关于城市未来的憧憬。</span
+            >
+            <div>
+              <router-link to="/bbs"
+                ><div><span>城市论坛</span></div></router-link
+              >
+            </div>
+          </div>
+          <div class="bbsContentI">
+            <img src="../assets/bbs1.jpg" alt="" />
+            <img src="../assets/bbs3.jpg" alt="" />
+            <img src="../assets/bbs4.jpg" alt="" />
+            <img src="../assets/bbs2.jpg" alt="" />
+          </div>
+        </div>
       </div>
     </div>
     <footer>
-      <i>
-        <span>备案</span>
-      </i>
+      <a
+        href="https://github.com/taozhongxiao"
+        title="github"
+        target="_blank"
+        class="iconfont"
+        >&#xe6f6;</a
+      >
+      <a class="identity" href="http://beian.miit.gov.cn/" target="_blank"
+        >鄂ICP备2021002553号</a
+      >
+      <p>Hosted by <b>taozhongxiao</b></p>
     </footer>
   </div>
 </template>
@@ -136,7 +185,44 @@ export default {
       index: [],
       // 决定加载地图和相应数据的方式 0: 省级 / 1:地级市 / else:其他
       code: 0,
-      years: []
+      years: [],
+      imgInfo: {
+        name: '湖北省论坛',
+        url: require('../../server/uploads/img/province-city-img/湖北省.jpg')
+      },
+      imgPath: {
+        北京市: require('../../server/uploads/img/province-city-img/北京市.jpg'),
+        天津市: require('../../server/uploads/img/province-city-img/天津市.jpg'),
+        河北省: require('../../server/uploads/img/province-city-img/河北省.jpg'),
+        山西省: require('../../server/uploads/img/province-city-img/山西省.jpg'),
+        内蒙古自治区: require('../../server/uploads/img/province-city-img/内蒙古自治区.jpg'),
+        辽宁省: require('../../server/uploads/img/province-city-img/辽宁省.jpg'),
+        吉林省: require('../../server/uploads/img/province-city-img/吉林省.jpg'),
+        黑龙江省: require('../../server/uploads/img/province-city-img/黑龙江省.jpg'),
+        上海市: require('../../server/uploads/img/province-city-img/上海市.jpg'),
+        江苏省: require('../../server/uploads/img/province-city-img/江苏省.jpg'),
+        浙江省: require('../../server/uploads/img/province-city-img/浙江省.jpg'),
+        安徽省: require('../../server/uploads/img/province-city-img/安徽省.jpg'),
+        福建省: require('../../server/uploads/img/province-city-img/福建省.jpg'),
+        江西省: require('../../server/uploads/img/province-city-img/江西省.jpg'),
+        山东省: require('../../server/uploads/img/province-city-img/山东省.jpg'),
+        河南省: require('../../server/uploads/img/province-city-img/河南省.jpg'),
+        湖北省: require('../../server/uploads/img/province-city-img/湖北省.jpg'),
+        湖南省: require('../../server/uploads/img/province-city-img/湖南省.jpg'),
+        广东省: require('../../server/uploads/img/province-city-img/广东省.jpg'),
+        广西壮族自治区: require('../../server/uploads/img/province-city-img/广西壮族自治区.jpg'),
+        海南省: require('../../server/uploads/img/province-city-img/海南省.jpg'),
+        重庆市: require('../../server/uploads/img/province-city-img/重庆市.jpg'),
+        四川省: require('../../server/uploads/img/province-city-img/四川省.jpg'),
+        贵州省: require('../../server/uploads/img/province-city-img/贵州省.jpg'),
+        云南省: require('../../server/uploads/img/province-city-img/云南省.jpg'),
+        西藏自治区: require('../../server/uploads/img/province-city-img/西藏自治区.jpg'),
+        陕西省: require('../../server/uploads/img/province-city-img/陕西省.jpg'),
+        甘肃省: require('../../server/uploads/img/province-city-img/甘肃省.jpg'),
+        青海省: require('../../server/uploads/img/province-city-img/青海省.jpg'),
+        宁夏回族自治区: require('../../server/uploads/img/province-city-img/宁夏回族自治区.jpg'),
+        新疆维吾尔自治区: require('../../server/uploads/img/province-city-img/新疆维吾尔自治区.jpg')
+      }
     }
   },
   mounted() {},
@@ -227,9 +313,7 @@ export default {
                 max: 5
               },
               center: [103.5363, 35.8572],
-              itemStyle: {
-                // borderWidth: 0
-              },
+              itemStyle: {},
               data: this.mapData
             }
           ]
@@ -253,7 +337,6 @@ export default {
             show: true,
             trigger: 'item',
             formatter: function(params) {
-              console.log(params)
               const info = getProvinceName(params.name)
               const value = params.value
               if (info) {
@@ -374,74 +457,51 @@ export default {
               },
               itemStyle: {},
               data: this.mapData
-              // label: {
-              //   show: true,
-              //   fontSize: '12px'
-              // }
             }
           ]
         }
       }
       this.myChart.setOption(optionMap, true)
       this.myChart.on('click', async function(arg) {
+        that.handleImgChange(arg.name)
         that.code = getProvinceCode(arg.name)
         that.queryMapInfo.level = '地级行政区'
         that.queryMapInfo.provinceToMap = arg.name
         that.mapLevelChange(that.code, arg.name)
-        // that.clearMap()
-        // await that.getMapData()
-        // const provinceColumn = getProvinceCityName(arg.name)
-        // that.columnData = that.columnData.filter(function(item) {
-        //   return provinceColumn.find(value => {
-        //     return value.name === item.name
-        //   })
-        // })
-        // that.columnValue = []
-        // that.columnCategory = []
-        // for (var i = 0; i < that.columnData.length; i++) {
-        //   that.columnCategory.push(that.columnData[i].name)
-        //   that.columnValue.push(that.columnData[i].value)
-        // }
-        // that.replaceCategory(that.columnCategory)
-        // that.columnCategory.forEach((value, index, arr) => {
-        //   // console.log(value.length)
-        //   if (value.length === 6) {
-        //     arr[index] = value.slice(0, 3)
-        //   } else if (value.length > 4) {
-        //     arr[index] = value.slice(0, 2)
-        //   } else {
-        //     arr[index] = value.slice(0, value.length - 1)
-        //   }
-        // })
-        // that.mapData.filter(function(item) {
-        //   return item.name = arg.name
-        // })
-        // that.drawMapGraph(that.code, arg.name)
-        // that.drawBarGraph()
-        // console.log(arg)
       })
       if (this.code === 0 || this.code === 1) {
         this.myChart.on('mouseover', function(params) {
-          console.log(params)
           that.myChartColumn.dispatchAction({
             type: 'highlight',
             dataIndex: params.dataIndex
-            // name: params.name
-            // value: params.value,
-            // seriesIndex: 0
           })
         })
         this.myChart.on('mouseout', function(params) {
           that.myChartColumn.dispatchAction({
             type: 'downplay',
             dataIndex: params.dataIndex
-            // seriesIndex: 0
           })
         })
       }
+      function resizeGraph() {
+        that.myChart.resize()
+      }
+      function throttle(fn, delay) {
+        let timer = null
+        return function() {
+          const context = this
+          const args = arguments
+          if (!timer) {
+            timer = setTimeout(() => {
+              fn.apply(context, args)
+              timer = null
+            }, delay)
+          }
+        }
+      }
+      window.addEventListener('resize', throttle(resizeGraph, 1000))
     },
     drawBarGraph() {
-      // const that = this
       if (
         this.myChartColumn !== null &&
         this.myChartColumn !== '' &&
@@ -452,9 +512,6 @@ export default {
       this.myChartColumn = this.$echarts.init(
         document.getElementById('myChartColumn')
       )
-      // this.myChartColumn = this.$echarts.init(
-      //   document.getElementById('myChartColumn')
-      // )
       let optionColumn
       if (this.code === 1) {
         optionColumn = {
@@ -476,9 +533,6 @@ export default {
             left: 70,
             right: 40
           },
-          // dataset: {
-          //   source: this.mapData
-          // },
           series: [
             {
               type: 'bar',
@@ -547,9 +601,6 @@ export default {
             left: 70,
             right: 40
           },
-          // dataset: {
-          //   source: this.mapData
-          // },
           series: [
             {
               type: 'bar',
@@ -604,9 +655,6 @@ export default {
             left: 70,
             right: 40
           },
-          // dataset: {
-          //   source: this.mapData
-          // },
           series: [
             {
               type: 'bar',
@@ -620,8 +668,6 @@ export default {
                   borderRadius: [0, 7, 7, 0]
                 }
               },
-              // barMinWidth: 12,
-              // barMaxWidth: 12,
               barCategoryGap: '50%',
               data: this.columnValue,
               label: {
@@ -643,23 +689,28 @@ export default {
               }
             }
           ]
-          // dataZoom: [
-          //   {
-          //     realtime: true,
-          //     type: 'inside', // 有type这个属性，滚动条在最下面，也可以不行，写y：36，这表示距离顶端36px，一般就是在图上面。
-          //     orient: 'vertical',
-          //     start: 92, // 表示默认展示20%～80%这一段。
-          //     end: 100,
-          //     maxValueSpan: 31,
-          //     minValueSpan: 25
-          //   }
-          // ]
         }
       }
       this.myChartColumn.setOption(optionColumn, true)
-      this.myChartColumn.on('mouseover', function(params) {
-        console.log(params)
-      })
+      this.myChartColumn.on('mouseover', function(params) {})
+      const that = this
+      function resizeGraph() {
+        that.myChartColumn.resize()
+      }
+      function throttle(fn, delay) {
+        let timer = null
+        return function() {
+          const context = this
+          const args = arguments
+          if (!timer) {
+            timer = setTimeout(() => {
+              fn.apply(context, args)
+              timer = null
+            }, delay)
+          }
+        }
+      }
+      window.addEventListener('resize', throttle(resizeGraph, 1000))
     },
     async getFormIndexData() {
       this.options = []
@@ -734,17 +785,14 @@ export default {
           set3.add(value.dataIndeCate3)
         }
       })
-      // console.log(this.options)
     },
     async getTimeIndexData() {
       this.years = []
       const { data: res } = await this.$http.get('/timeindex-data', {
         params: { level: this.queryMapInfo.level }
       })
-      console.log(res)
       const that = this
       for (var i = 0; i < res.data.formData.length; i++) {
-        console.log(res.data.formData[i])
         if (that.years.indexOf(res.data.formData[i].year) === -1) {
           that.years.push(res.data.formData[i].year)
         }
@@ -765,42 +813,19 @@ export default {
         )
         if (newdata.value) {
           that.mapData.push(newdata)
-          // that.columnData[newdata.name] = newdata.value
         }
       }
-      // console.log(this.mapData)
       this.mapData.sort(function(a, b) {
         return a.value - b.value
       })
       this.deepCopy(this.mapData, this.columnData)
-      // console.log(this.mapData)
-      // console.log(1)
       for (let i = 0; i < this.mapData.length; i++) {
-        // that.columnData[this.mapData[i].name] = this.mapData[i].value
         that.columnCategory.push(this.mapData[i].name)
         that.columnValue.push(this.mapData[i].value)
       }
-      // console.log(this.columnValue)
-      // console.log(this.columnData)
-      // console.log(this.mapData)
       this.replaceCategory(this.columnCategory)
-      // this.columnCategory.forEach((value, index, arr) => {
-      //   // console.log(value.length)
-      //   if (value.length === 6) {
-      //     arr[index] = value.slice(0, 3)
-      //   } else if (value.length > 4) {
-      //     arr[index] = value.slice(0, 2)
-      //   } else {
-      //     arr[index] = value.slice(0, value.length - 1)
-      //   }
-      // })
       this.min = Math.min.apply(null, this.columnValue)
       this.max = Math.max.apply(null, this.columnValue)
-      // this.columnCategory = this.columnCategory.slice(-31)
-      // this.columnValue = this.columnValue.slice(-31)
-      // console.log(this.columnCategory)
-      // console.log(this.columnValue)
-      // console.log(this.mapData)
     },
     loadMapJson(code) {
       if (code === 0) {
@@ -817,7 +842,6 @@ export default {
     },
     async handleIndexChange(value) {
       this.queryMapInfo.dataIndeCate3 = value[2]
-      // console.log(this.queryMapInfo.dataIndeCate3)
       this.clearMap()
       await this.getMapData()
       const that = this
@@ -826,10 +850,7 @@ export default {
         that.loadMapJson(0)
         that.drawMapGraph(0)
       } else if (this.code !== 0 && this.code !== 1) {
-        console.log(that.code)
-        console.log(that.queryMapInfo.provinceToMap)
         that.mapLevelChange(that.code, that.queryMapInfo.provinceToMap)
-        // that.drawMapGraph(that.code, that.queryMapInfo.provinceToMap)
       } else {
         that.code = 1
         that.loadMapJson(1)
@@ -848,7 +869,6 @@ export default {
         that.drawMapGraph(0)
       } else if (this.code !== 0 && this.code !== 1) {
         that.mapLevelChange(that.code, that.queryMapInfo.provinceToMap)
-        // that.drawMapGraph(that.code, that.queryMapInfo.provinceToMap)
       } else {
         that.code = 1
         that.loadMapJson(1)
@@ -861,16 +881,12 @@ export default {
       if (this.queryMapInfo.level === '地级行政区') {
         that.code = 1
         that.loadMapJson(1)
-        // that.queryMapInfo.dataIndeCate3 = '人均地区生产总值'
         that.clearMap()
         await that.getMapData()
-        // that.columnValue = that.columnValue.slice(-20)
-        // that.columnCategory = that.columnCategory.slice(-20)
         that.drawMapGraph(1)
       } else {
         that.code = 0
         that.loadMapJson(0)
-        // that.queryMapInfo.dataIndeCate3 = '人均地区生产总值'
         that.clearMap()
         await that.getMapData()
         that.drawMapGraph(0)
@@ -924,6 +940,12 @@ export default {
       this.replaceCategory(this.columnCategory)
       this.drawMapGraph(code, name)
       this.drawBarGraph()
+    },
+    handleImgChange(name) {
+      if (Object.keys(this.imgPath).includes(name)) {
+        this.imgInfo.name = name + '论坛'
+        this.imgInfo.url = this.imgPath[name]
+      }
     }
   },
   watch: {
@@ -940,47 +962,72 @@ export default {
   margin: 0;
   padding: 0;
   height: auto;
-  // height: 100%;
+  background-color: #fcfeff;
 }
 
 header {
   border-bottom: 1px solid #e1e2e1;
   height: 80px;
+  display: flex;
+  justify-content: space-between;
+  > a {
+    width: 20%;
+  }
   img {
     float: left;
     height: 25px;
-    padding-left: 25px;
+    padding-left: 30px;
     margin-top: 27px;
   }
   .headersection {
-    height: 70px;
+    height: 80px;
     float: left;
-    text-decoration: none;
+    width: 80%;
+    padding-right: 30px;
+    display: flex;
+    justify-content: space-between;
+    .mainMenuSearch {
+      height: 80px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      input {
+        border: 0;
+        border-bottom: 1px solid #e1e2e1;
+        width: 200px;
+        height: 20px;
+      }
+      input:focus {
+        outline: none;
+      }
+      i {
+        vertical-align: center;
+      }
+    }
     a {
       text-decoration: none;
       span {
         line-height: 80px;
-        padding-left: 70px;
         font-size: 14px;
         color: #808080;
       }
-    }
-    span {
-      line-height: 80px;
-      padding-left: 70px;
-      font-size: 14px;
-      color: #808080;
-      text-decoration: none;
     }
   }
 }
 
 .main {
-  // height: 520px;
   width: 100%;
   margin-top: 50px;
+  /deep/ .el-input__suffix {
+    right: -7px;
+  }
+  /deep/ .el-input__inner {
+    border: 0;
+    border-bottom: 1px solid #e7e7e9;
+    border-radius: 0;
+    padding-left: 0;
+  }
   .main-map {
-    // float: right;
     margin: 0 auto;
     max-width: 1311px;
     height: 546px;
@@ -995,10 +1042,12 @@ header {
       height: 100%;
       padding-right: 6%;
       .filtertext {
+        position: relative;
         display: block;
         font-size: 30px;
         line-height: 28px;
         font-weight: bold;
+        z-index: 1000;
       }
       .bgcolor {
         position: relative;
@@ -1006,8 +1055,8 @@ header {
         top: -15px;
         width: 40%;
         height: 25px;
-        background-color: #fadf6d;
-        z-index: -100;
+        background-color: #fadf6d !important;
+        z-index: 0;
       }
       .el-form {
         .subfiltermenu {
@@ -1033,7 +1082,13 @@ header {
         }
       }
       .homepic {
+        a {
+          text-decoration: none;
+        }
         text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
         span {
           color: #ffffff;
           font-size: 16px;
@@ -1042,6 +1097,7 @@ header {
           display: block;
           top: 45%;
           margin: 0 auto;
+          text-decoration: none;
         }
         img {
           display: block;
@@ -1050,12 +1106,6 @@ header {
         }
       }
     }
-  }
-  .secondclass {
-    margin-top: 50px;
-    width: 100%;
-    height: 800px;
-    background-color: #fafafb;
   }
 }
 
@@ -1072,43 +1122,183 @@ header {
   width: 66.6%;
   height: 100%;
   padding: 0;
-  // float: left;
   box-sizing: border-box;
-  // background-color: #f3f3f4;
-  // border-top: 2px solid #000000;
-  // border-bottom: 2px solid #000000;
 }
 
 #myChartColumn {
   width: 33.4%;
   height: 100%;
-  // float: left;
   box-sizing: border-box;
   z-index: 1000;
   overflow: auto;
-  // background-color: #f3f3f4;
-  // border-top: 2px solid #000000;
-  // border-bottom: 2px solid #000000;
+}
+
+.cityCompare {
+  margin-top: 80px;
+  margin: 0 auto;
+  max-width: 1311px;
+  background-color: #fcfeff;
+  box-sizing: border-box;
+  padding-top: 65px;
+  padding-bottom: 65px;
+  display: flex;
+  justify-content: space-between;
+  overflow: hidden;
+  .cityCompareTitle {
+    width: 35%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    p {
+      display: block;
+      margin-top: 0;
+      margin-bottom: 40px;
+      font-size: 48px;
+      font-weight: bold;
+    }
+    > span {
+      display: block;
+      font-size: 18px;
+    }
+    a {
+      text-decoration: none;
+      div {
+        height: 35px;
+        float: left;
+        width: 100px;
+        border-radius: 12px;
+        background-color: #000;
+        margin-right: 30px;
+        margin-top: 50px;
+        margin-bottom: 60px;
+        span {
+          width: 100%;
+          display: inline-block;
+          font-size: 14px;
+          color: #fff;
+          text-align: center;
+          line-height: 35px;
+        }
+      }
+    }
+  }
+  .cityImg {
+    width: 60%;
+    transform: translateX(150px);
+    transition: all 0.6s;
+  }
+  img {
+    width: 100%;
+  }
+}
+.cityCompare:hover {
+  .cityImg {
+    transform: translateX(0px);
+  }
+}
+
+.bbsArea {
+  width: 100%;
+  background-color: #fafafb;
+  .bbsContent {
+    margin: 0 auto;
+    max-width: 1311px;
+    display: flex;
+    justify-content: space-between;
+    .bbsContentC {
+      width: 35%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      p {
+        display: block;
+        margin-top: 0;
+        margin-bottom: 40px;
+        font-size: 48px;
+        font-weight: bold;
+      }
+      > span {
+        display: block;
+        font-size: 18px;
+      }
+      a {
+        text-decoration: none;
+        div {
+          height: 35px;
+          float: left;
+          width: 100px;
+          border-radius: 12px;
+          background-color: #000;
+          margin-right: 30px;
+          margin-top: 50px;
+          margin-bottom: 30px;
+          span {
+            width: 100%;
+            display: inline-block;
+            font-size: 14px;
+            color: #fff;
+            text-align: center;
+            line-height: 35px;
+          }
+        }
+      }
+    }
+    .bbsContentI {
+      width: 60%;
+      img {
+        border-radius: 10px;
+        width: 45%;
+        margin-left: 5%;
+        margin-top: 6%;
+        transition: all 0.4s;
+      }
+      img:nth-child(3) {
+        margin-bottom: 6%;
+      }
+      img:nth-child(4) {
+        margin-bottom: 6%;
+      }
+      img:hover {
+        transform: scale(1.1);
+      }
+    }
+  }
 }
 
 footer {
   height: 40px;
-  margin: 0 auto;
-  max-width: 1311px;
-  margin-top: 50px;
+  margin: 0 4%;
+  width: 92%;
+  margin-top: 70px;
   border-top: 1px solid #e1e2e1;
   line-height: 40px;
-  span {
-    padding-left: 25px;
-    padding-right: 25px;
+  > p {
+    line-height: 55px;
+    display: block;
+    float: right;
+    margin: 0;
+    font-size: 14px;
   }
-}
-
-/deep/ .el-input__inner {
-  border: 0;
-  border-bottom: 1px solid #e7e7e9;
-  border-radius: 0;
-  padding-left: 0;
+  a {
+    display: block;
+    font-size: 16px;
+    float: left;
+    font-weight: bold;
+    margin: 0 25px 0 0;
+    line-height: 55px;
+    color: #000000;
+    text-decoration: none;
+  }
+  .identity {
+    position: absolute;
+    left: 50%;
+    font-weight: normal;
+    transform: translateX(-50%);
+    font-size: 14px;
+  }
+  > a:hover {
+    color: #808080;
+  }
 }
 
 /deep/ .el-form-item__content {
@@ -1119,9 +1309,5 @@ footer {
 /deep/ .el-radio__label {
   font-size: 14px;
   font-weight: normal;
-}
-
-/deep/ .el-input__suffix {
-  right: -7px;
 }
 </style>

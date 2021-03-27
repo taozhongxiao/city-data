@@ -9,98 +9,39 @@
         <router-link to="/city"><span>城市对比</span></router-link>
         <router-link to="/province"><span>省份对比</span></router-link>
         <router-link to="/bbs"><span>论坛</span></router-link>
-        <span>搜索</span>
+        <span></span>
+        <div class="mainMenuSearch">
+          <input type="text" placeholder="搜索" />
+          <i class="el-icon-search" style="font-size: 18px"></i>
+        </div>
+        <span></span>
         <router-link to="/people" class="people"
           ><span>个人中心</span></router-link
         >
       </div>
     </header>
-    <div class="main">
-      <div class="mainContentArea">
-        <div class="provinceselection">
-          <div id="provinceChart"></div>
-          <div class="province1" v-bind:style="{ display: showProvince1 }">
-            <span>新疆维吾尔自治区</span>
-            <span></span>
-            <span></span>
-          </div>
-          <div class="province2" v-bind:style="{ display: showProvince2 }"></div>
-          <div class="province3" v-bind:style="{ display: showProvince3 }"></div>
-        </div>
-        <div class="main-map"></div>
-        <div class="secondclass">
-          <div>fuck</div>
-        </div>
-      </div>
-    </div>
+    <section>
+      <p>稍安勿躁。</p><br>
+      <p>注册功能正在开发中。</p>
+    </section>
     <footer>
-      <i>
-        <span>备案</span>
-      </i>
+      <a
+        href="https://github.com/taozhongxiao"
+        title="github"
+        target="_blank"
+        class="iconfont"
+        >&#xe6f6;</a
+      >
+      <a class="identity" href="http://beian.miit.gov.cn/" target="_blank"
+        >鄂ICP备2021002553号</a
+      >
+      <p>Hosted by <b>taozhongxiao</b></p>
     </footer>
   </div>
 </template>
 
 <script>
-import chinaMapJson from '../../assets/map/china-province.json'
-
 export default {
-  data() {
-    return {
-      showProvince1: 'block',
-      showProvince2: 'block',
-      showProvince3: 'block'
-    }
-  },
-  methods: {
-    drawMapGraph() {
-      this.provinceChart = this.$echarts.init(
-        document.getElementById('provinceChart')
-      )
-      this.$echarts.registerMap('chinaMap', chinaMapJson)
-      const optionMap = {
-        title: {
-          text: '请点击选择省份',
-          left: '2%',
-          top: '2%',
-          subtext: '最多可选择3个',
-          textStyle: {
-            fontWeight: 'bolder'
-          }
-        },
-        toolbox: {
-          show: true,
-          orient: 'vertical',
-          right: '2%',
-          bottom: '2%',
-          feature: {
-            restore: {}
-          }
-        },
-        series: [
-          {
-            type: 'map',
-            map: 'chinaMap',
-            roam: true,
-            zoom: 1.5,
-            scaleLimit: {
-              min: 1.5,
-              max: 5
-            },
-            center: [104.2363, 35.8572],
-            itemStyle: {}
-          }
-        ]
-      }
-      this.provinceChart.setOption(optionMap, true)
-      this.provinceChart.on('click', function(arg) {
-        console.log(arg)
-      })
-    }
-  },
-  mounted() {
-    this.drawMapGraph()
-  }
 }
 </script>
 
@@ -110,5 +51,105 @@ export default {
   padding: 0;
   height: auto;
   display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+header {
+  border-bottom: 1px solid #e1e2e1;
+  height: 80px;
+  display: flex;
+  justify-content: space-between;
+  > a {
+    width: 20%;
+  }
+  img {
+    float: left;
+    height: 25px;
+    padding-left: 30px;
+    margin-top: 27px;
+  }
+  .headersection {
+    height: 80px;
+    float: left;
+    width: 80%;
+    padding-right: 30px;
+    display: flex;
+    justify-content: space-between;
+    .mainMenuSearch {
+      height: 80px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      input {
+        border: 0;
+        border-bottom: 1px solid #e1e2e1;
+        width: 200px;
+        height: 20px;
+      }
+      input:focus {
+        outline: none;
+      }
+      i {
+        vertical-align: center;
+      }
+    }
+    a {
+      text-decoration: none;
+      span {
+        line-height: 80px;
+        // padding-left: 70px;
+        font-size: 14px;
+        color: #808080;
+      }
+    }
+  }
+}
+section {
+  max-width: 1311px;
+  width: 100%;
+  margin: 0 auto;
+  height: 440px;
+  padding-top: 60px;
+  p {
+    font-size: 80px;
+    font-weight: bold;
+    margin-bottom: 30px;
+    margin-top: 0;
+  }
+}
+footer {
+  height: 40px;
+  margin: 0 4%;
+  width: 92%;
+  margin-top: 75px;
+  border-top: 1px solid #e1e2e1;
+  line-height: 40px;
+  > p {
+    line-height: 55px;
+    display: block;
+    float: right;
+    margin: 0;
+    font-size: 14px;
+  }
+  a {
+    display: block;
+    font-size: 16px;
+    float: left;
+    font-weight: bold;
+    margin: 0 25px 0 0;
+    line-height: 55px;
+    color: #000000;
+    text-decoration: none;
+  }
+  .identity {
+    position: absolute;
+    left: 50%;
+    font-weight: normal;
+    transform: translateX(-50%);
+    font-size: 14px;
+  }
+  > a:hover {
+    color: #808080;
+  }
 }
 </style>

@@ -181,9 +181,23 @@ export default {
       option.dataset[1].source = this.data[1]
       this.BarLineGraph.setOption(option)
       const that = this
-      window.addEventListener('resize', function() {
+      function resizeGraph() {
         that.BarLineGraph.resize()
-      })
+      }
+      function throttle(fn, delay) {
+        let timer = null
+        return function() {
+          const context = this
+          const args = arguments
+          if (!timer) {
+            timer = setTimeout(() => {
+              fn.apply(context, args)
+              timer = null
+            }, delay)
+          }
+        }
+      }
+      window.addEventListener('resize', throttle(resizeGraph, 1000))
     }
   },
   beforeDestroy() {

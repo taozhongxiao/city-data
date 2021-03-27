@@ -72,7 +72,6 @@ export default {
               position: 'inside',
               formatter: function(p) {
                 const index = Object.keys(p.data)[1]
-                // console.log(p.data[index])
                 let value = ''
                 if (p.data[index] > 0) {
                   value = p.data[index]
@@ -101,7 +100,6 @@ export default {
               position: 'inside',
               formatter: function(p) {
                 const index = Object.keys(p.data)[2]
-                // console.log(p.data[index])
                 let value = ''
                 if (p.data[index] > 0) {
                   value = p.data[index]
@@ -124,7 +122,6 @@ export default {
               position: 'inside',
               formatter: function(p) {
                 const index = Object.keys(p.data)[3]
-                console.log(p.data[index])
                 let value = ''
                 if (p.data[index] > 0) {
                   value = p.data[index]
@@ -180,9 +177,23 @@ export default {
       }
       this.ScatterGraph.setOption(option)
       const that = this
-      window.addEventListener('resize', function() {
+      function resizeGraph() {
         that.ScatterGraph.resize()
-      })
+      }
+      function throttle(fn, delay) {
+        let timer = null
+        return function() {
+          const context = this
+          const args = arguments
+          if (!timer) {
+            timer = setTimeout(() => {
+              fn.apply(context, args)
+              timer = null
+            }, delay)
+          }
+        }
+      }
+      window.addEventListener('resize', throttle(resizeGraph, 1000))
     }
   },
   beforeDestroy() {

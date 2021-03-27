@@ -119,14 +119,26 @@ export default {
       if (this.newOption) {
         Object.assign(option, this.newOption)
       }
-      console.log('新', this.newOption)
-      console.log('2', option)
       option.dataset[0].source = this.data[0]
       this.LineGraph.setOption(option)
       const that = this
-      window.addEventListener('resize', function() {
+      function resizeGraph() {
         that.LineGraph.resize()
-      })
+      }
+      function throttle(fn, delay) {
+        let timer = null
+        return function() {
+          const context = this
+          const args = arguments
+          if (!timer) {
+            timer = setTimeout(() => {
+              fn.apply(context, args)
+              timer = null
+            }, delay)
+          }
+        }
+      }
+      window.addEventListener('resize', throttle(resizeGraph, 1000))
     }
   },
   beforeDestroy() {

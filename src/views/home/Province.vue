@@ -9,7 +9,12 @@
         <router-link to="/city"><span>城市对比</span></router-link>
         <router-link to="/province"><span>省份对比</span></router-link>
         <router-link to="/bbs"><span>论坛</span></router-link>
-        <span>搜索</span>
+        <span></span>
+        <div class="mainMenuSearch">
+          <input type="text" placeholder="搜索" />
+          <i class="el-icon-search" style="font-size: 16px"></i>
+        </div>
+        <span></span>
         <router-link to="/people" class="people"
           ><span>个人中心</span></router-link
         >
@@ -855,35 +860,54 @@ export default {
   margin: 0;
   padding: 0;
   height: auto;
+  background-color: #fcfeff;
 }
 header {
   border-bottom: 1px solid #e1e2e1;
   height: 80px;
+  display: flex;
+  justify-content: space-between;
+  > a {
+    width: 20%;
+  }
   img {
     float: left;
     height: 25px;
-    padding-left: 25px;
+    padding-left: 30px;
     margin-top: 27px;
   }
   .headersection {
     height: 80px;
     float: left;
-    text-decoration: none;
+    width: 80%;
+    padding-right: 30px;
+    display: flex;
+    justify-content: space-between;
+    .mainMenuSearch {
+      height: 80px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      input {
+        border: 0;
+        border-bottom: 1px solid #e1e2e1;
+        width: 200px;
+        height: 20px;
+      }
+      input:focus {
+        outline: none;
+      }
+      i {
+        vertical-align: center;
+      }
+    }
     a {
       text-decoration: none;
       span {
         line-height: 80px;
-        padding-left: 70px;
         font-size: 14px;
         color: #808080;
       }
-    }
-    span {
-      line-height: 80px;
-      padding-left: 70px;
-      font-size: 14px;
-      color: #808080;
-      text-decoration: none;
     }
   }
 }
